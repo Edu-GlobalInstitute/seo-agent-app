@@ -5,15 +5,15 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-st.set_page_config(page_title="Edu Global SEO Agent", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Edu Global SEO Agent PRO", page_icon="🏆", layout="wide")
 
 # Securely grab the API key
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Use the latest model and configure it to strictly output JSON
+# Pointing to the most advanced available API endpoint for this generation
 model = genai.GenerativeModel(
-    'gemini-2.5-flash',
+    'gemini-2.5-flash', 
     generation_config={"response_mime_type": "application/json"}
 )
 
@@ -24,7 +24,8 @@ def research_and_scrape(query):
     
     try:
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=3))
+            # Pulling slightly more results for deeper research
+            results = list(ddgs.text(query, max_results=4))
             for res in results:
                 links.append(res['href'])
                 
@@ -33,8 +34,8 @@ def research_and_scrape(query):
                 response = requests.get(url, headers=headers, timeout=5)
                 soup = BeautifulSoup(response.text, 'html.parser')
                 text = " ".join([p.text for p in soup.find_all('p')])
-                if len(text) > 100:
-                    scraped_data += f"\nSource: {url}\n{text[:1000]}\n"
+                if len(text) > 150:
+                    scraped_data += f"\nSource: {url}\n{text[:1200]}\n"
             except:
                 continue
     except Exception:
@@ -42,57 +43,54 @@ def research_and_scrape(query):
         
     return links, scraped_data
 
-st.title("🚀 Edu Global: AI SEO Agent (API Edition)")
-st.markdown("Generates deeply researched HTML articles, social posts, and pure JSON output.")
+st.title("🏆 Edu Global: Elite SEO & Content Agent")
+st.markdown("Generates hyper-optimized, student-focused content formatted in pure JSON.")
 
 with st.form("agent_form"):
-    topic = st.text_input("Target Topic (e.g., AP Calculus BC Exam Prep):")
-    zone = st.text_input("Target Audience/Zone (e.g., International Students in UAE):")
-    submit = st.form_submit_button("Generate JSON & Content")
+    topic = st.text_input("Target Topic (e.g., How to Crack the Math Olympiad):")
+    zone = st.text_input("Target Audience/Zone (e.g., High School Students in India):")
+    submit = st.form_submit_button("Generate Final Content")
 
 if submit and topic and zone:
-    st.info("Agent is attempting live web research...")
+    st.info("Executing deep competitor research...")
     links, competitor_data = research_and_scrape(f"{topic} {zone}")
     
-    # Core instructions for the AI
+    # THE FINALIZED, PRO-LEVEL SYSTEM INSTRUCTION
     system_instruction = f"""
-    You are an elite SEO expert and Social Media Manager for 'Edu Global Institute'. 
-    Topic: "{topic}", Zone: "{zone}".
-    Competitor Data (if any): {competitor_data if links else "Rely on elite internal knowledge."}
+    You are an elite, top-1% SEO Expert and Student Content Strategist for 'Edu Global Institute'. 
+    Topic: "{topic}", Target Audience: "{zone}".
+    Competitor Data: {competitor_data if links else "Rely on elite internal knowledge."}
     
-    You MUST output your response as a strictly valid JSON object using the exact keys below. 
-    Do not add any markdown formatting (like ```json) outside the object. Just return the raw JSON object.
+    CRITICAL INSTRUCTION: Your tone must be "Student-First". Do not sound like a boring corporate brochure. Sound inspiring, clear, authoritative, and deeply understanding of a student's academic stress and ambitions. Use simple, powerful language.
 
+    You MUST output your response as a strictly valid JSON object using the exact keys below. 
+    
     {{
       "seo_metadata": {{
-        "meta_title": "A highly clickable SEO title (under 60 characters)",
-        "meta_description": "A compelling meta description to drive clicks (under 160 characters)",
-        "target_keywords": "comma, separated, list, of, 10, highly, relevant, seo, keywords"
+        "meta_title": "Highly clickable SEO title, max 60 chars. Must include primary keyword.",
+        "meta_description": "Compelling description to drive clicks, max 160 chars. Must include secondary keywords.",
+        "target_keywords": "comma, separated, list, of, 15, highly, relevant, short, and, long, tail, seo, keywords"
       }},
-      "article_html": "A deeply organized, comprehensive, and amazing article. Use strictly HTML body tags (<h1>, <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>). Do not include <html>, <head>, or <body> tags. Structure it to be the absolute best guide on the internet.",
-      "linkedin_post": "**Title (The Hook):** [Scroll-stopping line with emojis]\\n\\n**Description:** [3-4 punchy paragraphs using bullet points. Address pain points. Strong CTA for Edu Global Institute.]\\n\\n**Hashtags:** [#EduGlobal, #StudyAbroad, etc]",
-      "instagram_caption": "Engaging, student-focused caption.\\n\\n[CTA]\\n\\n[Relevant Hashtags]"
+      "article_html": "A deeply organized, 1000+ word article designed to rank #1. OUTPUT STRICTLY IN HTML BODY TAGS (<h1>, <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>). Do not use <html>, <head>, or <body> tags. Structure: H1 Title, engaging hook, highly readable short paragraphs, bulleted lists for scannability, semantic LSI keywords integrated naturally, and a strong, inspiring conclusion driving students to Edu Global Institute.",
+      "linkedin_post": "**Title (The Hook):** [Scroll-stopping line with emojis]\\n\\n**Description:** [3-4 punchy paragraphs using bullet points. Speak to the ambition of the students or the parents. End with a strong CTA for Edu Global Institute.]\\n\\n**Keywords:** [10-15 comma-separated keywords/hashtags]",
+      "instagram_caption": "[Engaging hook for students]\\n\\n[Relatable body copy that builds hype or offers a quick tip]\\n\\n[CTA to link in bio]\\n\\n[10 highly relevant hashtags]"
     }}
     """
 
-    st.info("Drafting perfect JSON content...")
+    st.info("Engineering student-focused, SEO-perfect JSON data...")
     try:
-        # Generate the content
         response = model.generate_content(system_instruction)
-        
-        # Parse the JSON
         data = json.loads(response.text)
         
-        st.success("✅ Generation Complete!")
+        st.success("✅ Content Engineered Successfully!")
         st.markdown("---")
         
-        # Create beautiful UI Tabs for the user to view the data
         tab1, tab2, tab3, tab4 = st.tabs(["📄 HTML Article", "📱 Social Media", "🔍 SEO Metadata", "⚙️ Raw JSON"])
         
         with tab1:
-            st.subheader("Deeply Organized HTML Article")
+            st.subheader("Student-Focused HTML Article")
             st.code(data["article_html"], language="html")
-            with st.expander("Preview Article Visually"):
+            with st.expander("Visual Preview"):
                 st.markdown(data["article_html"], unsafe_allow_html=True)
                 
         with tab2:
@@ -103,16 +101,25 @@ if submit and topic and zone:
             st.markdown(data["instagram_caption"])
             
         with tab3:
-            st.subheader("Website Metadata")
+            st.subheader("Optimized Metadata")
             st.write(f"**Meta Title:** {data['seo_metadata']['meta_title']}")
             st.write(f"**Meta Description:** {data['seo_metadata']['meta_description']}")
             st.write(f"**Keywords:** {data['seo_metadata']['target_keywords']}")
             
         with tab4:
-            st.subheader("System-Ready JSON Data")
+            st.subheader("API-Ready JSON")
             st.json(data)
+            
+            # Simple download button for the JSON data
+            json_string = json.dumps(data, indent=2)
+            st.download_button(
+                label="Download Full JSON",
+                file_name="edu_global_content.json",
+                mime="application/json",
+                data=json_string
+            )
 
     except json.JSONDecodeError:
-        st.error("The AI failed to format the output as perfect JSON. Please try again.")
+        st.error("Data processing error. The AI failed to structure the JSON perfectly. Please re-run.")
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"System Error: {e}")
