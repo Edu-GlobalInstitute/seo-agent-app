@@ -1,5 +1,6 @@
 import google.generativeai as genai
 import json
+import re
 import streamlit as st
 
 # Securely grab the API key and configure the latest model
