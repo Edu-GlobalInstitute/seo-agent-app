@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 st.set_page_config(page_title="Pro SEO Agent", page_icon="🚀", layout="wide")
 
 # Securely grab the API key from Streamlit's secrets
-GEMINI_API_KEY = st.secrets["AIzaSyCADCYOgZ3VIfCD1b8ttwbrTW9Y_DfYPj0"]
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
