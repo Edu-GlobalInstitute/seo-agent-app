@@ -3,13 +3,19 @@ import google.generativeai as genai
 from duckduckgo_search import DDGS
 import requests
 from bs4 import BeautifulSoup
+import json
 
 st.set_page_config(page_title="Edu Global SEO Agent", page_icon="🚀", layout="wide")
 
 # Securely grab the API key
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
+
+# Use the latest model and configure it to strictly output JSON
+model = genai.GenerativeModel(
+    'gemini-2.5-flash',
+    generation_config={"response_mime_type": "application/json"}
+)
 
 def research_and_scrape(query):
     links = []
@@ -36,59 +42,77 @@ def research_and_scrape(query):
         
     return links, scraped_data
 
-st.title("🚀 Edu Global: AI SEO Agent")
-st.markdown("Enter a topic to generate highly optimized, high-converting content.")
+st.title("🚀 Edu Global: AI SEO Agent (API Edition)")
+st.markdown("Generates deeply researched HTML articles, social posts, and pure JSON output.")
 
 with st.form("agent_form"):
-    topic = st.text_input("Target Topic (e.g., International Math Olympiad Prep):")
-    zone = st.text_input("Target Audience/Zone (e.g., High School Students in India):")
-    submit = st.form_submit_button("Generate Perfect Content")
+    topic = st.text_input("Target Topic (e.g., AP Calculus BC Exam Prep):")
+    zone = st.text_input("Target Audience/Zone (e.g., International Students in UAE):")
+    submit = st.form_submit_button("Generate JSON & Content")
 
 if submit and topic and zone:
     st.info("Agent is attempting live web research...")
     links, competitor_data = research_and_scrape(f"{topic} {zone}")
     
-    if links and competitor_data:
-        st.success("Live Research Complete! Found top competitor data.")
-        prompt = f"""
-        You are an elite SEO expert and elite Social Media Manager for 'Edu Global Institute'. Topic: "{topic}", Zone: "{zone}".
-        Here is the text scraped from live top competitors: {competitor_data}
-        
-        Analyze this data, find keyword gaps, and output exactly these three things:
-        
-        1. PERFECT SEO ARTICLE: Write a highly optimized article. OUTPUT THIS STRICTLY IN HTML FORMAT. Use ONLY body tags (<h1>, <h2>, <p>, <ul>, <li>, <strong>). Do NOT include <html>, <head>, or <body> tags. Wrap the HTML inside a code block so it is easy to copy.
-        
-        2. PERFECT LINKEDIN POST: Create a highly engaging, professional LinkedIn post ready to publish. Format it EXACTLY like this:
-        **Title (The Hook):** [Write a scroll-stopping, attention-grabbing opening line with 1-2 emojis]
-        **Description (The Body):** [Write an engaging, value-driven post in 3-4 short, punchy paragraphs. Use bullet points for readability. Speak directly to the pain points of the target audience. End with a strong Call to Action to enroll or contact Edu Global Institute.]
-        **Keywords:** [Provide 10-15 highly relevant SEO keywords and hashtags, separated ONLY by commas, e.g., #EduGlobal, StudyAbroad, OlympiadPrep]
-        
-        3. INSTAGRAM CAPTION: Engaging caption with hashtags. Output in plain text.
-        """
-    else:
-        st.warning("⚠️ Live search blocked by cloud security. Falling back to Elite AI Knowledge Base...")
-        prompt = f"""
-        You are an elite SEO expert and elite Social Media Manager for the 'Edu Global Institute'. 
-        Target Topic: "{topic}"
-        Target Audience/Zone: "{zone}"
-        
-        Using your vast internal knowledge of current SEO trends, output exactly these three things:
-        
-        1. PERFECT SEO ARTICLE: Write a highly optimized article. OUTPUT THIS STRICTLY IN HTML FORMAT. Use ONLY body tags (<h1>, <h2>, <p>, <ul>, <li>, <strong>). Do NOT include <html>, <head>, or <body> tags. Wrap the HTML inside a code block so it is easy to copy.
-        
-        2. PERFECT LINKEDIN POST: Create a highly engaging, professional LinkedIn post ready to publish. Format it EXACTLY like this:
-        **Title (The Hook):** [Write a scroll-stopping, attention-grabbing opening line with 1-2 emojis]
-        **Description (The Body):** [Write an engaging, value-driven post in 3-4 short, punchy paragraphs. Use bullet points for readability. Speak directly to the pain points of the target audience. End with a strong Call to Action to enroll or contact Edu Global Institute.]
-        **Keywords:** [Provide 10-15 highly relevant SEO keywords and hashtags, separated ONLY by commas, e.g., #EduGlobal, StudyAbroad, OlympiadPrep]
-        
-        3. INSTAGRAM CAPTION: Engaging caption targeting the demographic with hashtags. Output in plain text.
-        """
+    # Core instructions for the AI
+    system_instruction = f"""
+    You are an elite SEO expert and Social Media Manager for 'Edu Global Institute'. 
+    Topic: "{topic}", Zone: "{zone}".
+    Competitor Data (if any): {competitor_data if links else "Rely on elite internal knowledge."}
+    
+    You MUST output your response as a strictly valid JSON object using the exact keys below. 
+    Do not add any markdown formatting (like ```json) outside the object. Just return the raw JSON object.
 
-    st.info("Drafting perfect content...")
+    {{
+      "seo_metadata": {{
+        "meta_title": "A highly clickable SEO title (under 60 characters)",
+        "meta_description": "A compelling meta description to drive clicks (under 160 characters)",
+        "target_keywords": "comma, separated, list, of, 10, highly, relevant, seo, keywords"
+      }},
+      "article_html": "A deeply organized, comprehensive, and amazing article. Use strictly HTML body tags (<h1>, <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>). Do not include <html>, <head>, or <body> tags. Structure it to be the absolute best guide on the internet.",
+      "linkedin_post": "**Title (The Hook):** [Scroll-stopping line with emojis]\\n\\n**Description:** [3-4 punchy paragraphs using bullet points. Address pain points. Strong CTA for Edu Global Institute.]\\n\\n**Hashtags:** [#EduGlobal, #StudyAbroad, etc]",
+      "instagram_caption": "Engaging, student-focused caption.\\n\\n[CTA]\\n\\n[Relevant Hashtags]"
+    }}
+    """
+
+    st.info("Drafting perfect JSON content...")
     try:
-        response = model.generate_content(prompt)
+        # Generate the content
+        response = model.generate_content(system_instruction)
+        
+        # Parse the JSON
+        data = json.loads(response.text)
+        
+        st.success("✅ Generation Complete!")
         st.markdown("---")
-        st.subheader("✅ Your Perfect Outcome")
-        st.markdown(response.text)
+        
+        # Create beautiful UI Tabs for the user to view the data
+        tab1, tab2, tab3, tab4 = st.tabs(["📄 HTML Article", "📱 Social Media", "🔍 SEO Metadata", "⚙️ Raw JSON"])
+        
+        with tab1:
+            st.subheader("Deeply Organized HTML Article")
+            st.code(data["article_html"], language="html")
+            with st.expander("Preview Article Visually"):
+                st.markdown(data["article_html"], unsafe_allow_html=True)
+                
+        with tab2:
+            st.subheader("LinkedIn Post")
+            st.markdown(data["linkedin_post"])
+            st.divider()
+            st.subheader("Instagram Caption")
+            st.markdown(data["instagram_caption"])
+            
+        with tab3:
+            st.subheader("Website Metadata")
+            st.write(f"**Meta Title:** {data['seo_metadata']['meta_title']}")
+            st.write(f"**Meta Description:** {data['seo_metadata']['meta_description']}")
+            st.write(f"**Keywords:** {data['seo_metadata']['target_keywords']}")
+            
+        with tab4:
+            st.subheader("System-Ready JSON Data")
+            st.json(data)
+
+    except json.JSONDecodeError:
+        st.error("The AI failed to format the output as perfect JSON. Please try again.")
     except Exception as e:
-        st.error(f"AI Generation Error: {e}")
+        st.error(f"Error: {e}")
