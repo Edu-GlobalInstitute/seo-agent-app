@@ -9,7 +9,6 @@ st.set_page_config(page_title="Edu Global SEO Agent", page_icon="🚀", layout="
 # Securely grab the API key
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=GEMINI_API_KEY)
-# Using the latest model to avoid 404 errors
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 def research_and_scrape(query):
@@ -52,27 +51,37 @@ if submit and topic and zone:
     if links and competitor_data:
         st.success("Live Research Complete! Found top competitor data.")
         prompt = f"""
-        You are an elite SEO expert for 'Edu Global Institute'. Topic: "{topic}", Zone: "{zone}".
+        You are an elite SEO expert and elite Social Media Manager for 'Edu Global Institute'. Topic: "{topic}", Zone: "{zone}".
         Here is the text scraped from live top competitors: {competitor_data}
         
         Analyze this data, find keyword gaps, and output exactly these three things:
         
         1. PERFECT SEO ARTICLE: Write a highly optimized article. OUTPUT THIS STRICTLY IN HTML FORMAT. Use ONLY body tags (<h1>, <h2>, <p>, <ul>, <li>, <strong>). Do NOT include <html>, <head>, or <body> tags. Wrap the HTML inside a code block so it is easy to copy.
-        2. LINKEDIN POST: Provide Title, Description, and Keywords (comma-separated). Output in plain text.
+        
+        2. PERFECT LINKEDIN POST: Create a highly engaging, professional LinkedIn post ready to publish. Format it EXACTLY like this:
+        **Title (The Hook):** [Write a scroll-stopping, attention-grabbing opening line with 1-2 emojis]
+        **Description (The Body):** [Write an engaging, value-driven post in 3-4 short, punchy paragraphs. Use bullet points for readability. Speak directly to the pain points of the target audience. End with a strong Call to Action to enroll or contact Edu Global Institute.]
+        **Keywords:** [Provide 10-15 highly relevant SEO keywords and hashtags, separated ONLY by commas, e.g., #EduGlobal, StudyAbroad, OlympiadPrep]
+        
         3. INSTAGRAM CAPTION: Engaging caption with hashtags. Output in plain text.
         """
     else:
         st.warning("⚠️ Live search blocked by cloud security. Falling back to Elite AI Knowledge Base...")
         prompt = f"""
-        You are an elite SEO expert for the 'Edu Global Institute'. 
+        You are an elite SEO expert and elite Social Media Manager for the 'Edu Global Institute'. 
         Target Topic: "{topic}"
         Target Audience/Zone: "{zone}"
         
         Using your vast internal knowledge of current SEO trends, output exactly these three things:
         
-        1. PERFECT SEO ARTICLE: Write a highly optimized article designed to rank #1. OUTPUT THIS STRICTLY IN HTML FORMAT. Use ONLY body tags (<h1>, <h2>, <p>, <ul>, <li>, <strong>). Do NOT include <html>, <head>, or <body> tags. Wrap the HTML inside a code block so it is easy to copy.
-        2. LINKEDIN POST: Provide Title, Description, and Keywords (comma-separated). Output in plain text.
-        3. INSTAGRAM CAPTION: Engaging caption with hashtags. Output in plain text.
+        1. PERFECT SEO ARTICLE: Write a highly optimized article. OUTPUT THIS STRICTLY IN HTML FORMAT. Use ONLY body tags (<h1>, <h2>, <p>, <ul>, <li>, <strong>). Do NOT include <html>, <head>, or <body> tags. Wrap the HTML inside a code block so it is easy to copy.
+        
+        2. PERFECT LINKEDIN POST: Create a highly engaging, professional LinkedIn post ready to publish. Format it EXACTLY like this:
+        **Title (The Hook):** [Write a scroll-stopping, attention-grabbing opening line with 1-2 emojis]
+        **Description (The Body):** [Write an engaging, value-driven post in 3-4 short, punchy paragraphs. Use bullet points for readability. Speak directly to the pain points of the target audience. End with a strong Call to Action to enroll or contact Edu Global Institute.]
+        **Keywords:** [Provide 10-15 highly relevant SEO keywords and hashtags, separated ONLY by commas, e.g., #EduGlobal, StudyAbroad, OlympiadPrep]
+        
+        3. INSTAGRAM CAPTION: Engaging caption targeting the demographic with hashtags. Output in plain text.
         """
 
     st.info("Drafting perfect content...")
