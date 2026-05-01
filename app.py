@@ -1,6 +1,5 @@
 import streamlit as st
 import json
-import re
 # Import your custom modules
 from researcher import execute_deep_research
 from analyzer import generate_ultimate_json
@@ -29,12 +28,14 @@ if submit and topic and zone:
         st.write("✍️ Phase 3: Engineering HTML, Socials, and Meta Data...")
         
         try:
-            # Call the analyzer module
+            # Call the analyzer module (which now has the bulletproof cleaner)
             data = generate_ultimate_json(topic, zone, scraped_data)
             status.update(label="Workflow Complete!", state="complete", expanded=False)
             
             # --- UI DASHBOARD ---
+            st.success("✅ Content Engineered Successfully!")
             st.markdown("---")
+            
             tab_strat, tab_content, tab_social, tab_meta, tab_json = st.tabs([
                 "📊 Competitor Strategy", "📄 HTML Article", "📱 Social Media", "🔍 SEO Metadata", "⚙️ Raw JSON"
             ])
@@ -77,3 +78,4 @@ if submit and topic and zone:
         except Exception as e:
             status.update(label="Error in Generation", state="error")
             st.error(f"System Error: {e}")
+            st.info("If you still see an error, the AI response might have been too long. Try a slightly narrower topic.")
