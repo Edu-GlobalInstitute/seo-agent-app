@@ -1,34 +1,38 @@
-from duckduckgo_search import DDGS
-import requests
-from bs4 import BeautifulSoup
+from firecrawl import FirecrawlApp
+import streamlit as st
+import time
 
-def execute_deep_research(topic, zone):
-    """Scrapes general top competitors and gathers deep context."""
-    links = []
+def execute_deep_research(topic, zone, competitor_url=None):
+    """
+    Executes an enterprise-grade deep crawl of a specific competitor 
+    or relies on AI knowledge if no URL is provided.
+    """
     scraped_data = ""
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
     
-    # 1. Broad Search for the topic
-    search_query = f"{topic} {zone}"
-    
-    try:
-        with DDGS() as ddgs:
-            results = list(ddgs.text(search_query, max_results=5))
-            for res in results:
-                links.append(res['href'])
+    # We will pass the competitor URL from the Streamlit UI
+    if competitor_url:
+        try:
+            # Securely grab the Firecrawl API key from Streamlit secrets
+            app = FirecrawlApp(api_key=st.secrets["FIRECRAWL_API_KEY"])
+            
+            # Initiate the deep scrape
+            scrape_result = app.scrape_url(
+                competitor_url, 
+                params={'formats': ['markdown']} # Markdown is perfect for Gemini to read
+            )
+            
+            # Extract the raw, deep content
+            if 'markdown' in scrape_result:
+                raw_text = scrape_result['markdown']
+                # Limit to first 4000 characters to keep it highly relevant
+                scraped_data = f"\n--- DEEP CRAWL DATA FROM {competitor_url} ---\n{raw_text[:4000]}\n"
+                return [competitor_url], scraped_data
+            else:
+                raise Exception("Could not extract markdown data.")
                 
-        # Scrape the text
-        for url in links:
-            try:
-                response = requests.get(url, headers=headers, timeout=5)
-                soup = BeautifulSoup(response.text, 'html.parser')
-                # Extract paragraphs and headers for deeper context
-                text = " ".join([p.text for p in soup.find_all(['p', 'h2', 'h3'])])
-                if len(text) > 200:
-                    scraped_data += f"\n--- Source: {url} ---\n{text[:1500]}\n"
-            except:
-                continue
-    except Exception as e:
-        print(f"Research warning: {e}")
-        
-    return links, scraped_data
+        except Exception as e:
+            print(f"Deep Crawl Failed: {e}")
+            return [], ""
+    else:
+        # If no competitor URL is provided, return empty to trigger the AI's internal knowledge
+        return [], ""
