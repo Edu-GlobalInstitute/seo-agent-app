@@ -1,6 +1,6 @@
 streamlit
 google-generativeai
 duckduckgo-search
-requests
-beautifulsoup4
 firecrawl-py
+beautifulsoup4
+requests
