@@ -3,52 +3,51 @@ import json
 import re
 import streamlit as st
 
-# Securely grab the API key and configure the model
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel(
-    'gemini-2.5-flash', 
-    generation_config={"response_mime_type": "application/json"}
-)
+json_model = genai.GenerativeModel('gemini-2.0-flash', generation_config={"response_mime_type": "application/json"})
 
-def generate_ultimate_json(topic, zone, competitor_data):
-    """Feeds the research to Gemini, cleans the output, and returns valid JSON."""
+def generate_ultimate_json(topic, zone, competitor_data, seo_intelligence):
+    """
+    Takes deep competitor scrapes AND real-time Google traffic data 
+    to engineer an article mathematically optimized for clicks.
+    """
     
-    system_instruction = f"""
-    You are an elite SEO Strategist and Competitor Analyst for 'Edu Global Institute'. 
-    Target Topic: "{topic}" | Target Audience: "{zone}".
-    Scraped Market Data: {competitor_data if competitor_data else "Rely on elite internal knowledge of the EdTech market."}
+    prompt = f"""
+    You are an elite SEO Growth Hacker and Copywriter. 
+    Target Topic: {topic} | Target Audience: {zone}
     
-    CRITICAL MISSION: We are competing against major players like Art of Problem Solving (AoPS), Cheenta Academy, The Little Scientist, Thinkus Academy, and RSI. 
-    Analyze the data and your internal knowledge of these institutions. What are they doing to gain traffic and trust that we are not? How are they structuring their curriculum pitching? 
+    REAL-TIME GOOGLE TRAFFIC DATA (You MUST target these exactly): 
+    {seo_intelligence}
     
-    You MUST output your response as a strictly valid JSON object. Everything must be genuine, highly accurate, and student/parent focused.
+    COMPETITOR DEEP CRAWL (Find their weak spots): 
+    {competitor_data}
+    
+    YOUR MISSION: Write an article that steals our competitors' clicks. 
+    1. The Meta Title must trigger intense curiosity (Click-Through-Rate optimization).
+    2. The HTML Article MUST include an H2 section explicitly answering the 'People Also Ask' questions from the Google data above to win the Google Featured Snippet.
+    3. Output STRICTLY valid JSON.
 
     {{
       "strategic_analysis": {{
-        "competitor_comparison": "Deep analysis comparing Edu Global to AoPS, Cheenta, RSI, etc. What are they doing better?",
-        "our_missing_gap": "Actionable advice on what Edu Global must implement immediately to steal their market share."
+        "competitor_traffic_gap": "Why competitors are losing clicks and how this article captures them."
       }},
       "seo_metadata": {{
-        "url_slug": "example-optimized-url-slug-with-dashes",
-        "meta_title": "Highly clickable SEO title (max 60 chars)",
-        "meta_description": "Compelling description to drive clicks (max 160 chars)",
-        "target_keywords": "comma, separated, list, of, 15, elite, seo, keywords"
+        "url_slug": "short-keyword-rich-slug",
+        "meta_title": "Curiosity-Driven SEO Title (Max 60 chars) - Must drive massive clicks",
+        "meta_description": "Punchy description promising a specific answer (Max 160 chars)",
+        "target_keywords": "15 high-volume keywords based on the live SEO data"
       }},
-      "article_html": "A 1500+ word, deeply organized article. OUTPUT STRICTLY IN HTML BODY TAGS (<h1>, <h2>, <h3>, <p>, <ul>, <li>, <strong>). No <html> or <body> tags. Must be superior to competitors. Use semantic LSI keywords.",
-      "linkedin_post": "**Title (The Hook):** [Scroll-stopping line with emojis]\\n\\n**Description:** [Punchy paragraphs using bullet points comparing the elite nature of our program vs standard ones. Strong CTA.]\\n\\n**Keywords:** [10-15 comma-separated keywords/hashtags]",
-      "instagram_caption": "[Engaging hook]\\n\\n[Relatable, elite academic value proposition]\\n\\n[CTA to link in bio]\\n\\n[10 highly relevant hashtags]"
+      "article_html": "A 1500+ word HTML article. You MUST use <h2> tags for the 'People Also Ask' questions. Structure for maximum readability (short paragraphs, bullet points). Output ONLY HTML body tags.",
+      "linkedin_post": "A highly controversial or insight-led post designed to go viral. Start with a hook that shatters a common belief.",
+      "instagram_caption": "Engaging hook with 10 optimized hashtags."
     }}
     """
-
-    # 1. Generate the raw text response
-    response = model.generate_content(system_instruction)
-    raw_text = response.text
     
-    # 2. BULLETPROOF CLEANER: Extract ONLY the JSON part
-    match = re.search(r'\{.*\}', raw_text, re.DOTALL)
+    response = json_model.generate_content(prompt).text
     
+    # Bulletproof JSON cleaner
+    match = re.search(r'\{.*\}', response, re.DOTALL)
     if match:
-        clean_json_string = match.group(0)
-        return json.loads(clean_json_string) # Safely load the cleaned string
+        return json.loads(match.group(0))
     else:
-        raise ValueError("AI Output Error: Could not locate a valid JSON object in the response.")
+        raise ValueError("Agent Pipeline Error: Could not format final JSON.")
