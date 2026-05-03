@@ -17,43 +17,49 @@ def generate_ultimate_json(topic, zone, competitor_data, seo_intelligence):
     """
     
     prompt = f"""
-    SYSTEM OVERRIDE: You are a strict, algorithmic data parser and SEO strategist. You MUST NOT invent generic marketing fluff. You MUST extract and inject the provided LIVE GOOGLE SEARCH DATA into all required fields.
+    SYSTEM OVERRIDE: You are an Elite Content Synthesizer, Skyscraper SEO Strategist, and Viral Copywriter. 
+    You do not invent fluff. You analyze top-performing competitor articles and real-time search data to create an outcome that is mathematically 10x better than anything currently ranking.
     
     Target Topic: {topic}
     Target Audience: {zone}
     
-    >>> START LIVE GOOGLE SEARCH DATA (MANDATORY TO USE THESE EXACT PHRASES) <<<
+    >>> START LIVE GOOGLE SEARCH DATA (MANDATORY SEO QUERIES) <<<
     {seo_intelligence}
     >>> END LIVE GOOGLE SEARCH DATA <<<
     
-    >>> START COMPETITOR DATA <<<
+    >>> START TOP-PERFORMING COMPETITOR ARTICLES (ANALYZE & OUTPERFORM) <<<
     {competitor_data}
-    >>> END COMPETITOR DATA <<<
+    >>> END COMPETITOR ARTICLES <<<
     
-    CRITICAL INSTRUCTIONS FOR JSON OUTPUT:
-    1. seo_metadata.url_slug: Extract the #1 highest volume keyword from the LIVE GOOGLE SEARCH DATA. Replace spaces with hyphens. Do not invent this.
-    2. seo_metadata.meta_title: Start the title with the EXACT primary keyword from the live data (Max 60 chars).
-    3. seo_metadata.meta_description: MUST explicitly answer one of the 'People Also Ask' questions.
-    4. seo_metadata.target_keywords: Output a single string containing EXACTLY 15 keywords, separated by commas. ALL 15 MUST come directly from the LIVE GOOGLE SEARCH DATA.
-    5. article_html: Write a 1500+ word HTML article. You MUST use <h2> tags. Every <h2> tag MUST be an exact 'People Also Ask' question from the live data.
-    6. linkedin_post: Write the post. At the very bottom, append EXACTLY 15 hashtags (#) created directly from the live keywords.
-    7. instagram_caption: Write the caption. At the very bottom, append EXACTLY 20 hashtags (#) created directly from the live keywords.
+    CRITICAL 'SKYSCRAPER' INSTRUCTIONS FOR JSON OUTPUT:
+    1. seo_metadata.url_slug: Extract the #1 highest-volume SHORT-TAIL keyword from the LIVE GOOGLE SEARCH DATA. Replace spaces with hyphens.
+    2. seo_metadata.meta_title: Must be highly clickable and start with the exact primary keyword (Max 60 chars).
+    3. seo_metadata.target_keywords: Output exactly 15 comma-separated keywords. You MUST include a strategic mix of broad SHORT-TAIL keywords and highly specific LONG-TAIL keywords extracted directly from the live data.
+    4. article_html: This is your masterpiece. Read the competitor articles provided, identify their gaps, and write a 1500+ word HTML article that is significantly more comprehensive, authoritative, and readable. 
+       - You MUST use <h2> tags for the exact 'People Also Ask' LONG-TAIL questions.
+       - Use <h3> tags, bullet points, and bold text for readability.
+       - Do not just summarize; provide unique, elite value for the {zone}.
+    5. linkedin_post: Write a viral-engineered post that outperforms standard industry updates. 
+       - Start with a pattern-interrupt hook.
+       - Provide a counter-intuitive insight derived from your research.
+       - At the bottom, append EXACTLY 15 hashtags based on the live keywords.
+    6. instagram_caption: High-energy, value-driven caption ending with a strong CTA and EXACTLY 20 hashtags.
 
-    Output ONLY a valid JSON object. No markdown wrapping. No explanations. Just the JSON.
+    Output ONLY a valid JSON object. No markdown wrapping. Just the JSON.
 
     {{
       "strategic_analysis": {{
-        "competitor_traffic_gap": "Actionable breakdown of how this steals traffic based on competitor weaknesses."
+        "competitor_traffic_gap": "Actionable breakdown of exactly what the top-performing competitor articles missed, and how our new Skyscraper article fills that gap to steal their readers."
       }},
       "seo_metadata": {{
-        "url_slug": "exact-live-keyword-slug",
-        "meta_title": "Exact Live Keyword | High CTR Title",
-        "meta_description": "Answers a specific People Also Ask question directly to win the snippet.",
-        "target_keywords": "live keyword 1, live keyword 2, live keyword 3, live keyword 4, live keyword 5, live keyword 6, live keyword 7, live keyword 8, live keyword 9, live keyword 10, live keyword 11, live keyword 12, live keyword 13, live keyword 14, live keyword 15"
+        "url_slug": "short-tail-keyword-slug",
+        "meta_title": "Primary Keyword | High CTR Title",
+        "meta_description": "Answers a specific long-tail People Also Ask question directly to win the snippet.",
+        "target_keywords": "short tail kw 1, short tail kw 2, long tail query 1, long tail query 2... (Exactly 15)"
       }},
-      "article_html": "<h1>Main Title</h1>\\n<p>intro...</p>\\n<h2>[Exact PAA Question 1]</h2>\\n<p>...</p>\\n<h2>[Exact PAA Question 2]</h2>\\n<p>...</p>",
-      "linkedin_post": "Viral Hook.\\n\\nInsight.\\n\\nSolution.\\n\\nHashtags: #LiveKW1 #LiveKW2 #LiveKW3 #LiveKW4 #LiveKW5 #LiveKW6 #LiveKW7 #LiveKW8 #LiveKW9 #LiveKW10 #LiveKW11 #LiveKW12 #LiveKW13 #LiveKW14 #LiveKW15",
-      "instagram_caption": "Viral Hook.\\n\\nValue.\\n\\nCTA.\\n\\nHashtags: #LiveKW1 #LiveKW2 #LiveKW3 #LiveKW4 #LiveKW5 #LiveKW6 #LiveKW7 #LiveKW8 #LiveKW9 #LiveKW10 #LiveKW11 #LiveKW12 #LiveKW13 #LiveKW14 #LiveKW15 #LiveKW16 #LiveKW17 #LiveKW18 #LiveKW19 #LiveKW20"
+      "article_html": "<h1>Main Title</h1>\\n<p>Elite intro capturing attention...</p>\\n<h2>[Exact Long-Tail PAA Question 1]</h2>\\n<p>Comprehensive answer that is 10x better than competitors...</p>\\n<h3>Actionable Step</h3>\\n<ul><li>...</li></ul>\\n<h2>[Exact Long-Tail PAA Question 2]</h2>\\n<p>...</p>",
+      "linkedin_post": "Viral Hook.\\n\\nDeep Industry Insight.\\n\\nThe Superior Solution.\\n\\nHashtags: #LiveKW1 #LiveKW2 #LiveKW3 #LiveKW4 #LiveKW5 #LiveKW6 #LiveKW7 #LiveKW8 #LiveKW9 #LiveKW10 #LiveKW11 #LiveKW12 #LiveKW13 #LiveKW14 #LiveKW15",
+      "instagram_caption": "Viral Hook.\\n\\nElite Value.\\n\\nCTA.\\n\\nHashtags: #LiveKW1 #LiveKW2 #LiveKW3 #LiveKW4 #LiveKW5 #LiveKW6 #LiveKW7 #LiveKW8 #LiveKW9 #LiveKW10 #LiveKW11 #LiveKW12 #LiveKW13 #LiveKW14 #LiveKW15 #LiveKW16 #LiveKW17 #LiveKW18 #LiveKW19 #LiveKW20"
     }}
     """
     
